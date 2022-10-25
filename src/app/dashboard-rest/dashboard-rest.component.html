@@ -1,0 +1,187 @@
+<div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+        <div class="card">
+
+            <form class="form-inline" [formGroup]="personsForm" (ngSubmit)="onSubmit()">
+                <div class="row g-3 align-items-center m-2">
+                    <div class="col-auto mb-2">
+                        <input type="text" placeholder="Name" formControlName="searchText" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && pf['searchText'].errors }">
+                        <!-- <div *ngIf="submitted && pf['searchText'].errors" class="invalid-feedback">
+                            <div *ngIf="submitted && pf['searchText'].errors['required']">
+                                Name is required
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="col-auto mb-2">
+                        <button class="btn btn-primary" type="submit">
+                            <span *ngIf="!searching">Search</span>
+                            <span *ngIf="searching" class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                            <span *ngIf="searching"> loading...</span>
+                        </button>
+                        &nbsp;
+                        <a class="btn btn-primary" (click)="clearSearch()">
+                            <span>Clear</span>
+                        </a>
+                    </div>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="table-dark m-4">
+                        <tr>
+                            <th>#.</th>
+                            <th>Name</th>
+                            <th>Height</th>
+                            <th>Mass</th>
+                            <th>Gender</th>
+                            <th>Homeworld</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngIf="persons.length < 1 && !loading">
+                            <td colspan="6">No record found.</td>
+                        </tr>
+                        <tr *ngIf="loading">
+                            <td colspan="6">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </td>
+                        </tr>
+                        <tr *ngFor="let p of persons; let i = index">
+                            <td>{{ (page * size) + i + 1 }}.</td>
+                            <td>{{ p.name }}</td>
+                            <td>{{ p.height }}</td>
+                            <td>{{ p.mass }}</td>
+                            <td>{{ p.gender }}</td>
+                            <td>{{ p.homeworld }}</td>
+                            <td>
+                                <a title="View {{p.name}}" (click)="open(personInfo, p.id)"
+                                    class="btn btn-primary btn-sm">...</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="col-auto m-3">
+                    <ngb-pagination [(page)]="page" [pageSize]="size" [collectionSize]="totalElements" [maxSize]="3"
+                        (pageChange)="pageChange($event)">
+                    </ngb-pagination>
+                </div>
+
+                <!-- Modal Starts Here -->
+                <div>
+                    <ng-template #personInfo let-modal>
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="modal-basic-title">{{person.name}}</h4>
+                            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('')"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="modal-body">
+                                <table class="table table-responsive table-borderless table-xl mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <td>Height: </td>
+                                            <td>
+                                                {{person.height}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mass: </td>
+                                            <td>{{person.mass}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hair Color: </td>
+                                            <td>{{person.hair_color}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Skin Color: </td>
+                                            <td>{{person.skin_color}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Eye Color: </td>
+                                            <td>{{person.eye_color}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Birth Year: </td>
+                                            <td>{{person.birth_year}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Gender: </td>
+                                            <td>{{person.gender}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Homeworld: </td>
+                                            <td>{{person.homeworld}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>films: </td>
+                                            <td>
+                                                <tr *ngFor="let p of person.films;">
+                                                    <td>
+                                                        <a href="{{p}}" target="_blanck">{{p}}</a>
+                                                    </td>
+                                                </tr>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>species: </td>
+                                            <td>
+                                                <tr *ngFor="let s of person.species;">
+                                                    <td>
+                                                        <a href="{{s}}" target="_blanck">{{s}}</a>
+                                                    </td>
+                                                </tr>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>vehicles: </td>
+                                            <td>
+                                                <tr *ngFor="let v of person.vehicles;">
+                                                    <td>
+                                                        <a href="{{v}}" target="_blanck">{{v}}</a>
+                                                    </td>
+                                                </tr>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>starships: </td>
+                                            <td>
+                                                <tr *ngFor="let s of person.starships;">
+                                                    <td>
+                                                        <a href="{{s}}" target="_blanck">{{s}}</a>
+                                                    </td>
+                                                </tr>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>created: </td>
+                                            <td>{{person.created | date : 'dd/MM/yyyy HH:mm:ss'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Edited: </td>
+                                            <td>{{person.edited | date : 'dd/MM/yyyy HH:mm:ss'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Url: </td>
+                                            <td><a href="{{person.url}}" target="_blanck">{{person.url}}</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+                <!-- Modal ends here -->
+            </div>
+
+        </div>
+    </div>
+    <div class="col-lg-2"></div>
+</div>
